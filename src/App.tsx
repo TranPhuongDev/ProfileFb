@@ -5,7 +5,6 @@ import {
   Button,
   Container,
   Grid,
-  Stack,
   Typography,
 } from "@mui/material";
 import "./App.css";
@@ -18,6 +17,8 @@ import Tab from "@mui/material/Tab";
 import TabContext from "@mui/lab/TabContext";
 import TabList from "@mui/lab/TabList";
 import TabPanel from "@mui/lab/TabPanel";
+import IntroduceYourself from "./component/introduceyourself";
+import ImageZoomDialog from "./component/imagezoomdialog";
 
 function App() {
   const [value, setValue] = React.useState("1");
@@ -26,12 +27,31 @@ function App() {
     setValue(newValue);
   };
 
+  const [open, setOpen] = React.useState(false);
+  // State để lưu URL của hình ảnh sẽ hiển thị trong dialog phóng to
+  const [selectedZoomImageUrl, setSelectedZoomImageUrl] = React.useState("");
+
+  const handleClickOpenZoom = (imgSrc: any) => {
+    setSelectedZoomImageUrl(imgSrc);
+    setOpen(true);
+  };
+
+  const handleCloseZoom = () => {
+    setOpen(false);
+    setSelectedZoomImageUrl("");
+  };
+
   return (
     <>
       <Container>
         <Grid sx={{ height: { md: "400px" }, position: "relative" }} size={8}>
           <img
             src="https://scontent.fsgn2-6.fna.fbcdn.net/v/t39.30808-6/481446201_1357129118809780_878225118746759463_n.jpg?_nc_cat=111&ccb=1-7&_nc_sid=cc71e4&_nc_ohc=tOZn6JeYvGIQ7kNvwFtH4iE&_nc_oc=Adkhx9hCoq6xDSlQcafHf6OmBd-gi04ANpmi0k7uvY23R64sJ4Bfg25D-A_HqGYbbsPxCGbG3LCVNuv2erK5-DFP&_nc_zt=23&_nc_ht=scontent.fsgn2-6.fna&_nc_gid=ABjSojYwKz1A97x_5iKGxQ&oh=00_AfQTR2ze-8WGr-xjvt7xjCvR5CFOfvaXWX9K1z4ipNKMdg&oe=68713C49"
+            onClick={() =>
+              handleClickOpenZoom(
+                "https://scontent.fsgn2-6.fna.fbcdn.net/v/t39.30808-6/481446201_1357129118809780_878225118746759463_n.jpg?_nc_cat=111&ccb=1-7&_nc_sid=cc71e4&_nc_ohc=tOZn6JeYvGIQ7kNvwFtH4iE&_nc_oc=Adkhx9hCoq6xDSlQcafHf6OmBd-gi04ANpmi0k7uvY23R64sJ4Bfg25D-A_HqGYbbsPxCGbG3LCVNuv2erK5-DFP&_nc_zt=23&_nc_ht=scontent.fsgn2-6.fna&_nc_gid=ABjSojYwKz1A97x_5iKGxQ&oh=00_AfQTR2ze-8WGr-xjvt7xjCvR5CFOfvaXWX9K1z4ipNKMdg&oe=68713C49"
+              )
+            }
             alt="logo"
             className="logo"
             style={{
@@ -56,13 +76,22 @@ function App() {
                 alignItems: "center",
                 justifyContent: "center",
               },
+              "&:focus": {
+                outline: "none",
+                boxShadow: "none",
+              },
             }}
             variant="outlined"
             startIcon={<CameraAltIcon />}
           >
             <Box
               component="span"
-              sx={{ display: { xs: "none", sm: "inline" } }}
+              sx={{
+                display: {
+                  xs: "none",
+                  sm: "inline",
+                },
+              }}
             >
               Chỉnh sửa ảnh bìa
             </Box>
@@ -101,6 +130,7 @@ function App() {
                 }}
                 alt="avt"
                 src={avatar}
+                onClick={() => handleClickOpenZoom(avatar)}
               />
             </Box>
           </Grid>
@@ -114,7 +144,7 @@ function App() {
           >
             <Box>
               <Typography variant="h5" sx={{ fontWeight: "bold" }}>
-                Trần Văn Phương (Xĩn)
+                Trần Văn Phương <span style={{ fontWeight: 200 }}>(Xĩn)</span>
               </Typography>
               <Typography sx={{ textAlign: { xs: "center", sm: "left" } }}>
                 322 người bạn
@@ -140,6 +170,10 @@ function App() {
                   border: "none",
                   marginBottom: { xs: "10px", sm: "0px", md: "10px" },
                   marginRight: { xs: "10px", md: "0px" },
+                  "&:focus": {
+                    outline: "none",
+                    boxShadow: "none",
+                  },
                 }}
                 variant="outlined"
                 startIcon={<AddIcon />}
@@ -154,6 +188,10 @@ function App() {
                   fontSize: "15px",
                   fontWeight: 500,
                   border: "none",
+                  "&:focus": {
+                    outline: "none",
+                    boxShadow: "none",
+                  },
                 }}
                 variant="outlined"
                 startIcon={<EditIcon />}
@@ -271,7 +309,9 @@ function App() {
                 />
               </TabList>
             </Box>
-            <TabPanel value="1">Bài viết</TabPanel>
+            <TabPanel sx={{ px: "0 !important" }} value="1">
+              <IntroduceYourself />
+            </TabPanel>
             <TabPanel value="2">Giới Thiệu</TabPanel>
             <TabPanel value="3">Bạn bè</TabPanel>
             <TabPanel value="4">Ảnh</TabPanel>
@@ -280,6 +320,12 @@ function App() {
             <TabPanel value="7">Xem thêm</TabPanel>
           </TabContext>
         </Box>
+
+        <ImageZoomDialog
+          open={open}
+          imageUrl={selectedZoomImageUrl}
+          onClose={handleCloseZoom}
+        />
       </Container>
     </>
   );
